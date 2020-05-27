@@ -1,0 +1,54 @@
+import requests
+from bs4 import BeautifulSoup
+import csv
+
+web = "https://csie.asia.edu.tw/faculty/professors"
+
+re = requests.get(web)
+re.encoding = "utf8"
+
+soup = BeautifulSoup(re.text,"lxml")
+
+tag_table = soup.find(attrs={"class":"row contact-category"})
+
+ALL_Professors = tag_table.find_all("div",class_="col-sm-12")
+
+csvfile = "test[1].csv"
+
+with open(csvfile, 'w+', newline='', encoding="big5") as fp:
+writer = csv.writer(fp)
+
+Fieldnames = ["級職","姓名","學歷","辦公室","分機","E-mail"]
+writer.writerow(Fieldnames)
+
+for One in ALL_Professors:
+    OneRecordList = ["","" ,"","","",""]
+    
+    #rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+    print (One.find('h2','card-header').string)
+    #rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+    OneRecordList[0] = One.find('p','card-meta').string
+    OneRecordList[1] = One.find('h2','card-header').string
+    
+    ALL_card_description = One.find_all("p",class_="card-description")
+
+    for oneItem in ALL_card_description:
+        
+        nw1 = oneItem.text.replace("\t","").replace(" ","").replace("\n","").split('：')[0]
+        nw = oneItem.text.replace("\t","").replace(" ","").replace("\n","").split('：')[1]
+
+        if nw1 == Fieldnames[2]:
+            OneRecordList[2] = nw
+            
+        elif nw1 == Fieldnames[3]:
+            OneRecordList[3] = nw
+            
+        elif nw1 == Fieldnames[4]:
+            OneRecordList[4] = nw
+    
+        elif nw1 == Fieldnames[5]:
+            OneRecordList[5] = nw
+
+
+    print(OneRecordList)
+    writer.writerow(OneRecordList)
