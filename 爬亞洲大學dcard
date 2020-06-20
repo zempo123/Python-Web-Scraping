@@ -1,0 +1,46 @@
+import requests
+from bs4 import BeautifulSoup
+import csv
+
+csvfile = "test[0].csv"
+
+
+
+web = "https://www.dcard.tw/f/asia?latest=true"
+re = requests.get(web)
+re.encoding = "utf8"
+soup = BeautifulSoup(re.text,"lxml")
+OneRecordList = [[0]*3 for i in range(30)]
+
+
+tag1 = soup.findAll('div','sc-6oxm01-1 cuMsby')
+#print(tag1)
+
+tag2 = soup.findAll('h2','sc-1v1d5rx-2 kZjhSU')
+#print(tag2)    
+
+tag3 = soup.findAll('div','sc-1v1d5rx-4 iCLomy')
+#print(tag3)
+
+with open(csvfile, 'w+', newline='', encoding="utf-8-sig") as fp:
+    writer1 = csv.writer(fp)
+
+    Fieldnames = ["使用名稱","標題","內容"]
+    writer1.writerow(Fieldnames)
+    
+    i = 0
+    for zro in tag1:
+        OneRecordList[i][0] = zro.find("span").string
+        i = i + 1
+    i = 0
+    for one in tag2:
+        OneRecordList[i][1] = one.find("span").string
+        i = i + 1
+    i = 0
+    for two in tag3:
+        OneRecordList[i][2] = two.find("span").string
+        i = i + 1;
+    for n in range(30):
+        print(OneRecordList[n])
+        writer1.writerow(OneRecordList[n])
+
