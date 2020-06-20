@@ -1,0 +1,38 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Jun 19 15:45:34 2020
+
+@author: ASIA-H506
+"""
+
+
+import requests
+from bs4 import BeautifulSoup
+import csv
+
+csvfile = "西斯[0].csv"
+
+url = 'https://www.dcard.tw/topics/%E8%A5%BF%E6%96%AF%E7%89%88'
+content = requests.get(url)
+content.encoding = 'utf8'
+soup = BeautifulSoup(content.text,'lxml')
+
+cache = soup.find('div', 'sc-1azsmde-0 jxJebT')
+article = cache.findAll('article', 'sc-1v1d5rx-0 lmtfq')
+
+def Filter(article):
+    result = [article.find('h2').text,
+              article.find('div', 'qtg15c-0 klhxjz').text,
+              article.find('div', 'sc-6oxm01-1 cuMsby').findAll('span')[2].text
+              ]
+    return result
+
+with open(csvfile, 'w+', newline='', encoding='utf-8-sig') as fp:
+    writer = csv.writer(fp)
+    Fieldnames = ["使用名稱","標題","內容"]
+    writer.writerow(Fieldnames)
+    
+    final = map(Filter, article)
+    final = list(final)
+    print(final)
+    writer.writerows(final)
