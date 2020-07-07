@@ -10,7 +10,7 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 
-csvfile = "西斯[0].csv"
+csvfile = "TEST[0].csv"
 
 url = 'https://www.dcard.tw/topics/%E8%A5%BF%E6%96%AF%E7%89%88'
 content = requests.get(url)
@@ -29,7 +29,7 @@ def Filter(article):
 
 with open(csvfile, 'w+', newline='', encoding='utf-8-sig') as fp:
     writer = csv.writer(fp)
-    Fieldnames = ["使用名稱","標題","內容"]
+    Fieldnames = ["標題","內容","時間"]
     writer.writerow(Fieldnames)
     
     final = map(Filter, article)
